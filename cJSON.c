@@ -297,7 +297,7 @@ typedef struct
 /* check if the given size is left to read in a given parse buffer (starting with 1) */
 #define can_read(buffer, size) ((buffer != NULL) && (((buffer)->offset + size) <= (buffer)->length))
 /* check if the buffer can be accessed at the given index (starting with 0) */
-#define can_access_at_index(buffer, index) ((buffer != NULL) && (((buffer)->offset + index) < (buffer)->length))
+#define can_access_at_index(buffer, index) ((buffer != NULL) && (((buffer)->offset + index) < (buffer)->length)) //通过长度检测是否可访问
 #define cannot_access_at_index(buffer, index) (!can_access_at_index(buffer, index))
 /* get a pointer to the buffer at the position */
 #define buffer_at_offset(buffer) ((buffer)->content + (buffer)->offset)
@@ -1049,7 +1049,7 @@ static parse_buffer *buffer_skip_whitespace(parse_buffer *const buffer)
         return buffer;
     }
 
-    while(can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32))
+    while(can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32)) //小于32均为不可打印字符
     {
         buffer->offset++;
     }
@@ -1088,7 +1088,7 @@ cJSON * cJSON_ParseWithOpts(const char *value, const char **return_parse_end, cJ
     }
 
     /* Adding null character size due to require_null_terminated. */
-    buffer_length = strlen(value) + sizeof("");
+    buffer_length = strlen(value) + sizeof(""); //字符总长度加1
 
     return cJSON_ParseWithLengthOpts(value, buffer_length, return_parse_end, require_null_terminated);
 }
@@ -1113,7 +1113,7 @@ cJSON * cJSON_ParseWithLengthOpts(const char *value, size_t buffer_length, const
     buffer.offset = 0;
     buffer.hooks = global_hooks;
 
-    item = cJSON_New_Item(&global_hooks);
+    item = cJSON_New_Item(&global_hooks); //申请一个json节点
     if(item == NULL)  /* memory fail */
     {
         goto fail;
@@ -1173,7 +1173,7 @@ fail:
     return NULL;
 }
 
-/* Default options for cJSON_Parse */
+/* Default options for cJSON_Parse */ //解析函数
 cJSON * cJSON_Parse(const char *value)
 {
     return cJSON_ParseWithOpts(value, 0, 0);
